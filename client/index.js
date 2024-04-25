@@ -1,13 +1,14 @@
 import aws from 'aws-sdk'
 const ses = new aws.SES({ region: 'us-west-2' })
+
+// LAMBDA HANDLER
+// 1. parse and destructures the 'event' (form req.body)
+// 2. inits 'sendMail' and builds params object with data
+// 3. tryCatch handles results
+
 export const handler = (event, context, callback) => {
   const body = JSON.parse(event.body)
   const { email, subject, vacation, flight, hotel } = body
-  // const email = body.email
-  // const subject = body.subject
-  // const vacation = body.vacation
-  // const flight = body.flight
-  // const hotel = body.hotel
 
   if (subject == null || vacation == null || email == null) {
     callback(null, JSON.stringify(event))
@@ -18,12 +19,17 @@ export const handler = (event, context, callback) => {
 async function sendMail(email, subject, vacation, flight, hotel, callback) {
   const emailParams = {
     Destination: {
-      ToAddresses: ['ehee27@gmail.com', 'scott@skywax.com'],
+      ToAddresses: ['scott@skywax.com'],
     },
     Message: {
       Body: {
-        // Text: { Data: vacation, flight, hotel },
-        Text: { Data: vacation, flight, hotel },
+        Text: {
+          Data: JSON.stringify({
+            vacation: vacation,
+            flight: flight,
+            hotel: hotel,
+          }),
+        },
       },
       Subject: { Data: subject },
     },
