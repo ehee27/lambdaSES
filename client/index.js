@@ -1,30 +1,48 @@
+// Our Lambda handler will first parse the req.body, then destructure our data
+// We'll define our subject line with users's name
+// Call 'sendMail' with our data
+// 'sendMail' sets a params Object
+// main 3 elements 1. Destination, 2. Message Body, 3. Reply Address
 import aws from 'aws-sdk'
 const ses = new aws.SES({ region: 'us-west-2' })
 
 // LAMBDA HANDLER
-// 1. parse and destructures the 'event' (form req.body)
-// 2. inits 'sendMail' and builds params object with data
-// 3. tryCatch handles results
-
 export const handler = (event, context, callback) => {
   const body = JSON.parse(event.body)
-  const { email, subject, vacation, flight, hotel } = body
 
-  if (subject == null || vacation == null || email == null) {
+  const { name, email, vacation, flight, hotel } = body
+
+  if (name == null || email == null || vacation == null) {
     callback(null, JSON.stringify(event))
   }
 
-  sendMail(email, subject, vacation, flight, hotel, callback)
+  const subject = `Order from: ${name}`
+
+  sendMail(name, email, subject, vacation, flight, hotel, callback)
 }
-async function sendMail(email, subject, vacation, flight, hotel, callback) {
+async function sendMail(
+  name,
+  email,
+  subject,
+  vacation,
+  flight,
+  hotel,
+  callback
+) {
   const emailParams = {
     Destination: {
-      ToAddresses: ['scott@skywax.com'],
+      ToAddresses: [
+        'scott@skywax.com',
+        'ehee27@gmail.com',
+        'dpericich@gmail.com',
+      ],
     },
     Message: {
       Body: {
         Text: {
           Data: JSON.stringify({
+            name: name,
+            email: email,
             vacation: vacation,
             flight: flight,
             hotel: hotel,

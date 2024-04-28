@@ -1,7 +1,9 @@
-React frontend is just a basic form
-App.js contains my form code that triggers fetch request to the Lambda URL
+1. Our form collects the data and triggers 'sendData', which will fetch our Lambda URL and stringify the data.
 
-index.js contains Lambda logic
-\*\*\* ses allows us to write sendMail func.
+2. Our Lambda handler will
+   A. parse the req.body
+   B. destruct our data
+   C. define our subject line with users's name
 
-We're packaging up data from a form and submitting it in the 'sendMail' function within a params object
+Call 'sendMail' with our data. 'sendMail' sets a params Object.
+\*\*\* main 3 elements 1. Destination, 2. Message Body, 3. Reply Address
